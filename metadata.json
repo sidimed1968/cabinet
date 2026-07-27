@@ -1,0 +1,6 @@
+{
+  "name": "Cabinet Gynécologique Nouakchott",
+  "description": "Application de gestion de cabinet gynécologique à Nouakchott : prise de rendez-vous en ligne, dossiers médicaux, comptes-rendus d'échographies et planning médecin.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
