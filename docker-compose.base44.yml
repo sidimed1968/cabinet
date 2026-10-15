@@ -1,0 +1,38 @@
+# Base44 sandbox environment for the "Cabinet Gynécologique Nouakchott" Vite + React SPA.
+#
+# The app is a single Vite dev server (client-side only, Firebase is accessed
+# directly from the browser). We therefore run its own `npm run dev` script from
+# the bind-mounted source so edits appear without an image rebuild.
+services:
+  web:
+    image: node:22
+    working_dir: /app
+    # Dependencies live in a named volume (never on the bind mount) and are
+    # installed from the current manifests on every start.
+    command:
+      - sh
+      - -ec
+      - "npm install --no-audit --no-fund --no-package-lock && exec npm run dev"
+    environment:
+      # Platform-provided sandbox flag (pass-through only; never hardcoded).
+      - BASE44_PREVIEW_MODE
+      # Platform-provided; Vite >= 6.1 appends this to its allowed hosts so the
+      # public preview hostname is accepted by the dev server.
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - web_node_modules:/app/node_modules
+    restart: on-failure
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+volumes:
+  web_node_modules:
